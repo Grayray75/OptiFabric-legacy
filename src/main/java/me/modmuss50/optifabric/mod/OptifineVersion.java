@@ -3,11 +3,11 @@ package me.modmuss50.optifabric.mod;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import me.modmuss50.optifabric.patcher.ASMUtils;
-import me.modmuss50.optifabric.util.ZipUtils;
 import net.fabricmc.loader.api.FabricLoader;
-
+import net.minecraft.client.main.Main;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
 import java.util.jar.JarEntry;
@@ -91,12 +91,9 @@ public class OptifineVersion {
 		}
 
 		Holder<Boolean> isInstaller = new Holder<>(false);
-		ZipUtils.iterateContents(file, (zip, zipEntry) -> {
+		ZipUtil.iterate(file, (in, zipEntry) -> {
 			if (zipEntry.getName().startsWith("patch/")) {
 				isInstaller.setValue(true);
-				return false;
-			} else {
-				return true;
 			}
 		});
 
