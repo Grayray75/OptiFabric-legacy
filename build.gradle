@@ -11,52 +11,44 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	mavenCentral()
-	maven {
-		name "Modmuss50 Repository"
-		url 'https://maven.fabricmc.net/'
-	}
-	maven { url 'https://jitpack.io' }
-	maven {
-		name = 'SpongePowered'
-		url = 'https://repo.spongepowered.org/maven'
-	}
-	maven {
-		name = 'mojang'
-		url = 'https://libraries.minecraft.net/'
-	}
-	maven {
-		name = 'legacy-fabric'
-		url = 'https://maven.legacyfabric.net/'
-	}
+    mavenCentral()
+    maven {
+        name "Modmuss50 Repository"
+        url 'https://maven.fabricmc.net/'
+    }
+    maven { url 'https://jitpack.io' }
+    maven {
+        name = 'legacy-fabric'
+        url = 'https://maven.legacyfabric.net/'
+    }
 }
 
 minecraft {
-	accessWidener = file("src/main/resources/optifabric.accesswidener")
+    accessWidener = file("src/main/resources/optifabric.accesswidener")
     intermediaryUrl = {
-        return "https://maven.legacyfabric.net/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+        return "https://maven.legacyfabric.net/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar"
     }
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
-	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+    modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+    include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 }
 
 task unzip(type: Copy) {
-	def zipFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
-	def outputDir = file("${buildDir}/unpacked/dist")
+    def zipFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
+    def outputDir = file("${buildDir}/unpacked/dist")
 
-	if(outputDir.exists()){
-		outputDir.deleteDir()
-	}
+    if (outputDir.exists()) {
+        outputDir.deleteDir()
+    }
 
-	from zipTree(zipFile)
-	into outputDir
+    from zipTree(zipFile)
+    into outputDir
 }
 
 processResources {
@@ -87,25 +79,25 @@ java {
 }
 
 jar {
-	from "LICENSE"
+    from "LICENSE"
 }
 
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 
-	// select the repositories you want to publish to
-	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
 }
