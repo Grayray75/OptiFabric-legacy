@@ -1,18 +1,7 @@
-buildscript {
-	repositories {
-		jcenter()
-		maven {
-			name = 'Fabric'
-			url = 'https://maven.fabricmc.net/'
-		}
-	}
-	dependencies {
-		classpath "net.fabricmc:fabric-loom:0.2.7-SNAPSHOT"
-	}
+plugins {
+    id 'fabric-loom' version '0.6-SNAPSHOT'
+    id 'maven-publish'
 }
-
-apply plugin: net.fabricmc.loom.LoomGradlePlugin
-apply plugin: 'maven-publish'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -30,7 +19,7 @@ repositories {
 	maven { url 'https://jitpack.io' }
 	maven {
 		name = 'SpongePowered'
-		url = 'http://repo.spongepowered.org/maven'
+		url = 'https://repo.spongepowered.org/maven'
 	}
 	maven {
 		name = 'mojang'
@@ -38,26 +27,23 @@ repositories {
 	}
 	maven {
 		name = 'legacy-fabric'
-		url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+		url = 'https://maven.legacyfabric.net/'
 	}
 }
 
 minecraft {
 	accessWidener = file("src/main/resources/optifabric.accesswidener")
-	intermediaryUrl = {
-		return "https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
-	}
+    intermediaryUrl = {
+        return "https://maven.legacyfabric.net/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+    }
 }
 
 dependencies {
-	compile "com.google.guava:guava:23.5-jre"
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modCompile ("net.fabricmc:fabric-loader-1.8.9:0.8.7+build.202006122116") {
-		exclude module: "guava"
-	}
-	modCompile "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 
 	//Used to handle the zip processing
@@ -82,16 +68,11 @@ task unzip(type: Copy) {
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
-	}
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
